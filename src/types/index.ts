@@ -10,4 +10,5 @@ export type TProduct = {
   image: string;
   price: number;
   category: string;
+  description: string
 };

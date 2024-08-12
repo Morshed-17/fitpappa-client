@@ -1,5 +1,6 @@
 import CategoryContainer from "@/components/Category/CategoryContainer"
-import Banner from "@/components/Hero/Banner"
+import Banner from "@/components/Home/Banner"
+import Benefits from "@/components/Home/Benefits"
 import MasonaryImage from "@/components/Home/MasonaryImage"
 import FeaturedProducts from "@/components/Product/FeaturedProducts"
 
@@ -11,6 +12,7 @@ const Home = () => {
       <Banner/>
       <CategoryContainer/>
       <FeaturedProducts/>
+      <Benefits/>
       <MasonaryImage/>
     </div>
   )
