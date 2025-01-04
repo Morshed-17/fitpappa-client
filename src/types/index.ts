@@ -1,14 +1,16 @@
 export type TCategory = {
   _id: string;
   name: string;
-  thumbnail: string;
+  description: string;
+  image: string;
 };
 
 export type TProduct = {
   _id: string;
   name: string;
-  image: string;
+  description: string;
   price: number;
-  category: string;
-  description: string
+  stock: number;
+  category: TCategory;
+  images: string[];
 };

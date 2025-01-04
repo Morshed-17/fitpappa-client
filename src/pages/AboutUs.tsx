@@ -1,6 +1,6 @@
 import Container from "@/components/shared/Container";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Avatar } from "@/components/ui/avatar";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 
 const AboutUs = () => {
@@ -8,6 +8,7 @@ const AboutUs = () => {
     <Container>
       <div className="py-12 space-y-12">
         {/* Company Overview */}
+
         <section className="text-center">
           <h2 className="text-4xl font-bold mb-4">Who We Are</h2>
           <p className="text-lg text-gray-700 max-w-3xl mx-auto">
@@ -46,7 +47,14 @@ const AboutUs = () => {
             ].map((member, index) => (
               <Card key={index} className="shadow-md">
                 <CardHeader className="flex items-center">
-                  <Avatar src={member.img} alt={member.name} className="mr-4" />
+                  <Avatar>
+                    <AvatarImage
+                      src={member.img}
+                      alt={member.name}
+                      className="mr-4"
+                    />
+                  </Avatar>
+
                   <div>
                     <CardTitle>{member.name}</CardTitle>
                     <p className="text-gray-600">{member.role}</p>
@@ -121,7 +129,7 @@ const AboutUs = () => {
               </a>
             </p>
           </div>
-          <Button variant="primary" className="mt-6">
+          <Button variant="secondary" className="mt-6">
             Contact Us
           </Button>
         </section>

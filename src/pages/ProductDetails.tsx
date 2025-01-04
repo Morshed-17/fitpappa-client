@@ -1,13 +1,14 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { products } from "../../fakeData/ProductsData";
 import { ShoppingCart, Package, Tag, Star, ArrowLeftIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Container from "@/components/shared/Container";
+import { useGetAllProductsQuery } from "@/redux/api/endpoints/productApi";
 
 const ProductDetails = () => {
+  const { data: products } = useGetAllProductsQuery(undefined);
   const navigate = useNavigate();
   const { id } = useParams();
-  const product = products.find((item) => item._id === id);
+  const product = products?.data?.products.find((item) => item._id === id);
 
   if (!product) {
     return <div className="text-center text-gray-800">Product not found</div>;

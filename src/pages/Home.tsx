@@ -1,8 +1,9 @@
-import CategoryContainer from "@/components/Category/CategoryContainer"
-import Banner from "@/components/Home/Banner"
-import Benefits from "@/components/Home/Benefits"
-import MasonaryImage from "@/components/Home/MasonaryImage"
-import FeaturedProducts from "@/components/Product/FeaturedProducts"
+import CategoryContainer from "@/components/pages/Home/CategoryContainer"
+import Banner from "@/components/pages/Home/Banner"
+import Benefits from "@/components/pages/Home/Benefits"
+import MasonaryImage from "@/components/pages/Home/MasonaryImage"
+import FeaturedProducts from "@/components/pages/Home/FeaturedProducts"
+
 
 
 

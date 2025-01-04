@@ -6,7 +6,7 @@ import { Select, SelectItem } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import { SelectContent } from "@radix-ui/react-select";
 import { useState } from "react";
-import { products } from "../../fakeData/ProductsData";
+
 import { Link } from "react-router-dom";
 import {
   Pagination,
@@ -17,8 +17,11 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { useGetAllProductsQuery } from "@/redux/api/endpoints/productApi";
 
 const Products = () => {
+  const {data: products} = useGetAllProductsQuery(undefined)
+
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 500]);
@@ -114,7 +117,7 @@ const Products = () => {
           <div className="w-full md:w-3/4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
             {/* Example Product Cards */}
             {/* Replace with dynamic data */}
-            {products?.slice(0, 8).map((item) => (
+            {products?.data?.products.slice(0, 8).map((item) => (
               <Card className="shadow-sm rounded-none" key={item._id}>
                 <CardHeader>
                   <img
