@@ -6,7 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Button } from "../../ui/button";
+import { Button } from "./button";
 import { Link } from "react-router-dom";
 import { TProduct } from "@/types";
 import { ShoppingCart } from "lucide-react";

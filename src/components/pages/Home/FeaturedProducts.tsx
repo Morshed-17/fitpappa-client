@@ -1,7 +1,7 @@
 import { useGetAllProductsQuery } from "@/redux/api/endpoints/productApi";
 import Container from "../../shared/Container";
 import SectionTitle from "../../shared/SectionTitle";
-import ProductCard from "./ProductCard";
+import ProductCard from "../../ui/ProductCard";
 import { TProduct } from "@/types";
 
 

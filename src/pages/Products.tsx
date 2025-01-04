@@ -1,11 +1,11 @@
 import Container from "@/components/shared/Container";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
 import { Input } from "@/components/ui/input";
 import { Select, SelectItem } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import { SelectContent } from "@radix-ui/react-select";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Link } from "react-router-dom";
 import {
@@ -18,28 +18,30 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { useGetAllProductsQuery } from "@/redux/api/endpoints/productApi";
+import ProductCard from "@/components/ui/ProductCard";
+import { TCategory, TProduct } from "@/types";
+import { useGetAllCategoriesQuery } from "@/redux/api/endpoints/categoryApi";
 
 const Products = () => {
-  const {data: products} = useGetAllProductsQuery(undefined)
+  const { data: products } = useGetAllProductsQuery(undefined);
+  const { data: categories } = useGetAllCategoriesQuery(undefined);
 
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [priceRange, setPriceRange] = useState<[number, number]>([0, 500]);
-  const [sortOption, setSortOption] = useState("asc");
+  const [searchTerm, setSearchTerm] = useState(""); // Tracks input value
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(""); // Tracks debounced value
 
-  const handleCategoryChange = (category: string) => {
-    setSelectedCategories((prev) =>
-      prev.includes(category)
-        ? prev.filter((cat) => cat !== category)
-        : [...prev, category]
-    );
-  };
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm); // Update debounced value after delay
+    }, 300); // 300ms delay
 
-  const clearFilters = () => {
-    setSearchTerm("");
-    setSelectedCategories([]);
-    setPriceRange([0, 500]);
-    setSortOption("asc");
+    return () => {
+      clearTimeout(handler); // Clear timeout on cleanup
+    };
+  }, [searchTerm]); // Runs whenever `searchTerm` changes
+
+  // Handle input changes
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value); // Update input value immediately
   };
 
   return (
@@ -50,14 +52,14 @@ const Products = () => {
           <div className="w-full md:w-1/4 space-y-8 bg-gray-50 p-5">
             {/* Search */}
             <Input
-              placeholder="Search for products..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full"
+              onChange={handleSearch}
+              placeholder="Search for products..."
+              className="w-full focus-visible:ring-offset-0 focus-visible:ring-0 "
             />
 
             {/* Sort Options */}
-            <Select onValueChange={setSortOption} value={sortOption}>
+            <Select>
               <SelectContent>
                 <SelectItem value="asc">Price: Low to High</SelectItem>
                 <SelectItem value="desc">Price: High to Low</SelectItem>
@@ -68,77 +70,36 @@ const Products = () => {
             <div className="space-y-4">
               <h3 className="font-medium">Categories</h3>
               <div className="flex flex-wrap gap-2">
-                {["Weights", "Benches", "Barbells", "Strength"].map(
-                  (category) => (
-                    <Button
-                      key={category}
-                      variant={
-                        selectedCategories.includes(category)
-                          ? "outline"
-                          : "destructive"
-                      }
-                      onClick={() => handleCategoryChange(category)}
-                      className="text-sm"
-                    >
-                      {category}
-                    </Button>
-                  )
-                )}
+                {categories?.data?.map((item: TCategory) => (
+                  <Button key={item._id} className="text-sm">
+                    {item.name}
+                  </Button>
+                ))}
               </div>
             </div>
 
             {/* Price Range Filter */}
             <div>
-              <h3 className="font-medium mb-2">
-                Price Range: ${priceRange[0]} - ${priceRange[1]}
-              </h3>
-              <Slider
-                value={priceRange}
-                max={500}
-                step={5}
-                className="max-w-full"
-                onValueChange={(newValue) =>
-                  setPriceRange(newValue as [number, number])
-                }
-              />
+              <h3 className="font-medium mb-2">Price Range:</h3>
+              <Slider max={500} step={5} className="max-w-full" />
             </div>
 
             {/* Clear Filters Button */}
-            <Button
-              variant="secondary"
-              onClick={clearFilters}
-              className="w-full"
-            >
+            <Button variant="secondary" className="w-full">
               Clear Filters
             </Button>
           </div>
 
           {/* Product Listings */}
           <div className="w-full md:w-3/4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-            {/* Example Product Cards */}
-            {/* Replace with dynamic data */}
-            {products?.data?.products.slice(0, 8).map((item) => (
-              <Card className="shadow-sm rounded-none" key={item._id}>
-                <CardHeader>
-                  <img
-                    src={item.image}
-                    alt="Product Name"
-                    className=" object-cover "
-                  />
-                  <CardTitle>{item.name}</CardTitle>
-                  <p className="text-gray-600 font-bold">${item.price}</p>
-                </CardHeader>
-                <CardContent>
-                  <Link to={`/product/${item._id}`}>
-                    <Button variant="secondary" className="w-full">
-                      View Details
-                    </Button>
-                  </Link>
-                </CardContent>
-              </Card>
+            {products?.data?.products.slice(0, 8).map((item: TProduct) => (
+              <ProductCard key={item._id} {...item} />
             ))}
           </div>
         </div>
+
+        {/* pagination */}
+
         <Pagination>
           <PaginationContent>
             <PaginationItem>
