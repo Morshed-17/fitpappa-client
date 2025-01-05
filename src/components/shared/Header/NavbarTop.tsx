@@ -18,7 +18,7 @@ const NavbarTop = () => {
         </div>
         <div className="flex-1 flex justify-end items-center gap-3">
           <UserRound className="text-white" />
-          <Link to='/cart'> 
+          <Link to="/cart">
             <Button variant="secondary">
               <ShoppingCart />
               <span>0.0$</span>

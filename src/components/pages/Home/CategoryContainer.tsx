@@ -12,6 +12,7 @@ const CategoryContainer = () => {
     <Container>
       <div className="mt-12">
         <SectionTitle title="EQUIPMENT CATEGORY" />
+
         <div className="grid lg:grid-cols-5 md:grid-cols-2 gap-12 mt-6">
           {categories?.data?.slice(0, 5).map((item: TCategory) => (
             <CategoryCard key={item._id} {...item} />

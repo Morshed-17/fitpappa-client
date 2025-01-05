@@ -7,7 +7,7 @@ import { TProduct } from "@/types";
 
 const FeaturedProducts = () => {
 
-  const {data:products, isLoading} = useGetAllProductsQuery(undefined)
+  const {data:products, isLoading} = useGetAllProductsQuery({})
   
   return (
     <Container>

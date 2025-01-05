@@ -2,12 +2,8 @@ import Container from "@/components/shared/Container";
 import { Button } from "@/components/ui/button";
 
 import { Input } from "@/components/ui/input";
-import { Select, SelectItem } from "@/components/ui/select";
-import { Slider } from "@/components/ui/slider";
-import { SelectContent } from "@radix-ui/react-select";
 import { useEffect, useState } from "react";
 
-import { Link } from "react-router-dom";
 import {
   Pagination,
   PaginationContent,
@@ -21,18 +17,31 @@ import { useGetAllProductsQuery } from "@/redux/api/endpoints/productApi";
 import ProductCard from "@/components/ui/ProductCard";
 import { TCategory, TProduct } from "@/types";
 import { useGetAllCategoriesQuery } from "@/redux/api/endpoints/categoryApi";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Loader, Search } from "lucide-react";
 
 const Products = () => {
-  const { data: products } = useGetAllProductsQuery(undefined);
-  const { data: categories } = useGetAllCategoriesQuery(undefined);
-
   const [searchTerm, setSearchTerm] = useState(""); // Tracks input value
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(""); // Tracks debounced value
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [sort, setSort] = useState("");
+  const [minPrice, setMinPrice] = useState<number | undefined>();
+  const [maxPrice, setMaxPrice] = useState<number | undefined>();
 
+  const { data: categories } = useGetAllCategoriesQuery(undefined);
+  const { data: products, isLoading } = useGetAllProductsQuery({
+    searchQuery: debouncedSearchTerm,
+    categoryIds: selectedCategories,
+    sort,
+    minPrice,
+    maxPrice,
+  });
+
+  //* Search
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedSearchTerm(searchTerm); // Update debounced value after delay
-    }, 300); // 300ms delay
+    }, 500); // 300ms delay
 
     return () => {
       clearTimeout(handler); // Clear timeout on cleanup
@@ -42,6 +51,29 @@ const Products = () => {
   // Handle input changes
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value); // Update input value immediately
+  };
+
+  //* Handle Price range
+
+  const handlePriceSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const min = formData.get("min");
+    const max = formData.get("max");
+
+    setMinPrice(min ? parseFloat(min.toString()) : undefined);
+    setMaxPrice(max ? parseFloat(max.toString()) : undefined);
+  };
+
+  //* Categories select
+  // Handle checkbox changes
+  const handleCheckboxChange = (categoryId: string) => {
+    setSelectedCategories(
+      (prev) =>
+        prev.includes(categoryId)
+          ? prev.filter((id) => id !== categoryId) // Remove if already selected
+          : [...prev, categoryId] // Add if not selected
+    );
   };
 
   return (
@@ -58,44 +90,108 @@ const Products = () => {
               className="w-full focus-visible:ring-offset-0 focus-visible:ring-0 "
             />
 
-            {/* Sort Options */}
-            <Select>
-              <SelectContent>
-                <SelectItem value="asc">Price: Low to High</SelectItem>
-                <SelectItem value="desc">Price: High to Low</SelectItem>
-              </SelectContent>
-            </Select>
-
             {/* Category Filters */}
             <div className="space-y-4">
-              <h3 className="font-medium">Categories</h3>
-              <div className="flex flex-wrap gap-2">
-                {categories?.data?.map((item: TCategory) => (
-                  <Button key={item._id} className="text-sm">
-                    {item.name}
-                  </Button>
-                ))}
+              <div className="space-y-4">
+                <h3 className="font-medium">Categories</h3>
+                <div className="space-y-2">
+                  {categories?.data?.map((item: TCategory) => (
+                    <div key={item._id} className="flex items-center space-x-2">
+                      {/* Checkbox for each category */}
+                      <Checkbox
+                        id={item._id}
+                        checked={selectedCategories.includes(item._id)}
+                        onCheckedChange={() => handleCheckboxChange(item._id)}
+                      />
+                      <label htmlFor={item._id} className="text-sm">
+                        {item.name}
+                      </label>
+                    </div>
+                  ))}
+                </div>
               </div>
+            </div>
+
+            {/* Sorting */}
+
+            <div>
+              <h3 className="font-medium ">Sort By Price:</h3>
+              {sort === "asc" ? (
+                <Button
+                  onClick={() => setSort("desc")}
+                  className="mt-2"
+                  size={"sm"}
+                  variant={"outline"}
+                >
+                  High To Low
+                </Button>
+              ) : (
+                <Button
+                  onClick={() => setSort("asc")}
+                  className="mt-2"
+                  size={"sm"}
+                  variant={"outline"}
+                >
+                  Low To High
+                </Button>
+              )}
             </div>
 
             {/* Price Range Filter */}
             <div>
               <h3 className="font-medium mb-2">Price Range:</h3>
-              <Slider max={500} step={5} className="max-w-full" />
+
+              <form
+                onSubmit={handlePriceSubmit}
+                className="flex gap-2 items-center"
+              >
+                <Input
+                  placeholder="min"
+                  type="number"
+                  name="min"
+                  className="focus-visible:ring-offset-0 focus-visible:ring-0"
+                />
+                <Input
+                  placeholder="max"
+                  name="max"
+                  type="number"
+                  className="focus-visible:ring-offset-0 focus-visible:ring-0"
+                />
+                <Button className="">
+                  <Search />
+                </Button>
+              </form>
             </div>
 
             {/* Clear Filters Button */}
-            <Button variant="secondary" className="w-full">
+            <Button variant="default" className="w-full bg-orange-500">
               Clear Filters
             </Button>
           </div>
 
           {/* Product Listings */}
-          <div className="w-full md:w-3/4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-            {products?.data?.products.slice(0, 8).map((item: TProduct) => (
-              <ProductCard key={item._id} {...item} />
-            ))}
-          </div>
+          {products?.data?.products.length > 0 ? (
+            <>
+              <div className="w-full md:w-3/4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                {products?.data?.products.map((item: TProduct) => (
+                  <ProductCard key={item._id} {...item} />
+                ))}
+              </div>
+            </>
+          ) : (
+            <>
+              {" "}
+              {isLoading ? (
+                <div className="w-full h-[calc(100vh-336px)] flex items-center justify-center">
+                  <Loader />
+                </div>
+              ) : (
+                <div className="w-full h-[calc(100vh-336px)] flex items-center justify-center">
+                  <h1 className="text-3xl">No Product Found 🥲</h1>
+                </div>
+              )}
+            </>
+          )}
         </div>
 
         {/* pagination */}
