@@ -11,12 +11,24 @@ import { Button } from "@/components/ui/button";
 import Container from "@/components/shared/Container";
 import { useGetSingleProductQuery } from "@/redux/api/endpoints/productApi";
 import { TProduct } from "@/types";
+import { addToCart, TCartItem } from "@/redux/features/cartSlice";
+import { useAppDispatch } from "@/redux/hook";
 
 const ProductDetails = () => {
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { id } = useParams();
 
   const { data, isLoading } = useGetSingleProductQuery(id);
+  const product: TProduct = data?.data;
+
+  const handleAddToCart = () => {
+    const cartItem: TCartItem = {
+      product,
+      quantity: 1,
+    };
+    dispatch(addToCart(cartItem));
+  };
 
   if (isLoading) {
     return (
@@ -25,7 +37,7 @@ const ProductDetails = () => {
       </div>
     );
   }
-  const product: TProduct = data?.data;
+
   if (!product) {
     return <div className="text-center text-gray-800">Product not found</div>;
   }
@@ -90,13 +102,13 @@ const ProductDetails = () => {
                   </p>
                 </div>
                 <div className="mt-8">
-                  {product?.stock < 0 ? (
-                    <Button variant="secondary" disabled>
+                  {product?.stock <= 0 ? (
+                    <Button variant="secondary" className="" disabled>
                       <ShoppingCart className="mr-2" />
                       Add to Cart
                     </Button>
                   ) : (
-                    <Button variant="secondary">
+                    <Button onClick={handleAddToCart} variant="secondary">
                       <ShoppingCart className="mr-2" />
                       Add to Cart
                     </Button>
