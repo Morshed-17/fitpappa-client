@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Search } from 'lucide-react';
+import { Search } from "lucide-react";
 import { TCategory } from "@/types";
 
 interface SidebarProps {
@@ -16,7 +16,8 @@ interface SidebarProps {
   setSort: React.Dispatch<React.SetStateAction<string>>;
   setMinPrice: React.Dispatch<React.SetStateAction<number | undefined>>;
   setMaxPrice: React.Dispatch<React.SetStateAction<number | undefined>>;
-  page: number ;
+  page: number;
+  resetFilters: () => void;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({
@@ -30,6 +31,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   setSort,
   setMinPrice,
   setMaxPrice,
+  resetFilters,
 }) => {
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -51,7 +53,6 @@ const Sidebar: React.FC<SidebarProps> = ({
         ? prev.filter((id) => id !== categoryId)
         : [...prev, categoryId]
     );
-    
   };
 
   const handlePriceSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -124,7 +125,11 @@ const Sidebar: React.FC<SidebarProps> = ({
         </form>
       </div>
 
-      <Button variant="default" className="w-full bg-orange-500">
+      <Button
+        onClick={resetFilters}
+        variant="default"
+        className="w-full bg-orange-500"
+      >
         Clear Filters
       </Button>
     </div>
@@ -132,4 +137,3 @@ const Sidebar: React.FC<SidebarProps> = ({
 };
 
 export default Sidebar;
-

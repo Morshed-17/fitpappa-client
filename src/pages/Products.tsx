@@ -36,6 +36,17 @@ const Products = () => {
     }
   };
 
+  //* --Reset filters
+  const resetFilters = () => {
+    setSearchTerm("");
+    setDebouncedSearchTerm("");
+    setSelectedCategories([]);
+    setSort("");
+    setMinPrice(undefined);
+    setMaxPrice(undefined);
+    setPage(1);
+  };
+
   return (
     <Container>
       <div className="min-h-screen">
@@ -52,6 +63,7 @@ const Products = () => {
             setMinPrice={setMinPrice}
             setMaxPrice={setMaxPrice}
             page={page}
+            resetFilters={resetFilters}
           />
           <ProductList
             products={products?.data?.products}
