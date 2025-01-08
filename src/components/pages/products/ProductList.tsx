@@ -8,10 +8,11 @@ interface ProductListProps {
 }
 
 const ProductList: React.FC<ProductListProps> = ({ products, isLoading }) => {
+  
   if (isLoading) {
     return (
-      <div className="h-[calc(100vh-336px)] flex items-center justify-center">
-        <Loader />
+      <div className="h-[600px] w-full flex items-center  justify-center">
+        <Loader className="size-10" />
       </div>
     );
   }

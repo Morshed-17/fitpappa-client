@@ -1,19 +1,34 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { ShoppingCart, Package, Tag, Star, ArrowLeftIcon } from "lucide-react";
+import {
+  ShoppingCart,
+  Package,
+  Tag,
+  Star,
+  ArrowLeftIcon,
+  LoaderIcon,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Container from "@/components/shared/Container";
-import { useGetAllProductsQuery } from "@/redux/api/endpoints/productApi";
+import { useGetSingleProductQuery } from "@/redux/api/endpoints/productApi";
+import { TProduct } from "@/types";
 
 const ProductDetails = () => {
-  const { data: products } = useGetAllProductsQuery(undefined);
   const navigate = useNavigate();
   const { id } = useParams();
-  const product = products?.data?.products.find((item) => item._id === id);
 
+  const { data, isLoading } = useGetSingleProductQuery(id);
+
+  if (isLoading) {
+    return (
+      <div className=" h-[500px] flex items-center justify-center text-center w-full">
+        <LoaderIcon className="size-10" />
+      </div>
+    );
+  }
+  const product: TProduct = data?.data;
   if (!product) {
     return <div className="text-center text-gray-800">Product not found</div>;
   }
-
   return (
     <Container>
       <div className="py-12 min-h-[calc(100vh-200px)]">
@@ -26,15 +41,12 @@ const ProductDetails = () => {
               <div className="md:flex-shrink-0  md:max-w-96">
                 <img
                   className="rounded-md object-cover w-full"
-                  src={product.image}
+                  src={product.images[0]}
                   alt={product.name}
                 />
               </div>
 
               <div className="p-6">
-                <div className="uppercase tracking-wide text-sm text-gray-500 font-semibold">
-                  {product.category}
-                </div>
                 <h1 className="mt-2 text-3xl leading-8 font-bold text-gray-900">
                   {product.name}
                 </h1>
@@ -59,7 +71,8 @@ const ProductDetails = () => {
                 <div className="mt-4 flex items-center text-gray-700">
                   <Package className="h-5 w-5 mr-2" />
                   <p>
-                    In stock: <span className="font-semibold">Available</span>
+                    stock:{" "}
+                    <span className="font-semibold">{product?.stock}</span>
                   </p>
                 </div>
 
@@ -67,19 +80,27 @@ const ProductDetails = () => {
                   {product.description}
                 </p>
 
-                <div className="mt-8">
-                  <Button variant="secondary">
-                    <ShoppingCart className="mr-2" />
-                    Add to Cart
-                  </Button>
-                </div>
-
                 <div className="mt-8 flex items-center text-gray-700">
                   <Tag className="h-5 w-5 mr-2" />
                   <p>
                     Category:{" "}
-                    <span className="font-semibold">{product.category}</span>
+                    <span className="font-semibold">
+                      {product?.category?.name}
+                    </span>
                   </p>
+                </div>
+                <div className="mt-8">
+                  {product?.stock < 0 ? (
+                    <Button variant="secondary" disabled>
+                      <ShoppingCart className="mr-2" />
+                      Add to Cart
+                    </Button>
+                  ) : (
+                    <Button variant="secondary">
+                      <ShoppingCart className="mr-2" />
+                      Add to Cart
+                    </Button>
+                  )}
                 </div>
               </div>
             </div>
