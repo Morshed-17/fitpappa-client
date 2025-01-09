@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card,CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { useAppSelector } from "@/redux/hook";
+import { Link } from "react-router-dom";
 
 const Cart = () => {
   const cartCount = useAppSelector((state) => state.cart);
@@ -50,9 +51,10 @@ const Cart = () => {
               <p>Total</p>
               <p>{totalPrice}</p>
             </div>
-            <Button variant="secondary" className="w-full mt-4">
+           <Link to="/checkout">
+           <Button variant="secondary" className="w-full mt-4">
               Proceed to Checkout
-            </Button>
+            </Button></Link>
           </Card>
         </div>
       </div>

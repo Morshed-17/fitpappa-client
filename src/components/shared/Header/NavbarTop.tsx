@@ -3,8 +3,10 @@ import Container from "../Container";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart, UserRound } from "lucide-react";
 import Search from "./Search";
+import { useAppSelector } from "@/redux/hook";
 
 const NavbarTop = () => {
+  const cart = useAppSelector((state) => state.cart);
   return (
     <Container>
       <div className="flex items-center py-6">
@@ -21,7 +23,7 @@ const NavbarTop = () => {
           <Link to="/cart">
             <Button variant="secondary">
               <ShoppingCart />
-              <span>0.0$</span>
+              <span>${cart.totalPrice}</span>
             </Button>
           </Link>
         </div>
