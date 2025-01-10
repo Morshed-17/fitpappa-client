@@ -2,7 +2,7 @@ import CartCard from "@/components/pages/Cart/CartCard";
 import Container from "@/components/shared/Container";
 import SectionTitle from "@/components/shared/SectionTitle";
 import { Button } from "@/components/ui/button";
-import { Card,CardTitle } from "@/components/ui/card";
+import { Card, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { useAppSelector } from "@/redux/hook";
 import { Link } from "react-router-dom";
@@ -51,10 +51,17 @@ const Cart = () => {
               <p>Total</p>
               <p>{totalPrice}</p>
             </div>
-           <Link to="/checkout">
-           <Button variant="secondary" className="w-full mt-4">
-              Proceed to Checkout
-            </Button></Link>
+            {cartCount.cartItems.length === 0 ? (
+              <Button variant="secondary" className="w-full mt-4" disabled>
+                Proceed to Checkout
+              </Button>
+            ) : (
+              <Link to="/checkout">
+                <Button variant="secondary" className="w-full mt-4">
+                  Proceed to Checkout
+                </Button>
+              </Link>
+            )}
           </Card>
         </div>
       </div>

@@ -1,9 +1,15 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TCategory } from "@/types";
+import { useNavigate } from "react-router-dom";
 
-const CategoryCard = ({ name, image }: TCategory) => {
+const CategoryCard = ({ name, image, _id }: TCategory) => {
+  const navigate = useNavigate();
+
   return (
-    <Card className="cursor-pointer group">
+    <Card
+      onClick={() => navigate("/products", { state: { categoryId: _id } })}
+      className="cursor-pointer group min-w-56"
+    >
       <CardHeader>
         <CardTitle>
           <img

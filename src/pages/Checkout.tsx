@@ -17,8 +17,8 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAppSelector } from "@/redux/hook";
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowLeft, LoaderIcon } from "lucide-react";
-import { TOrder } from "@/types";
+import { ArrowLeft, Loader2Icon } from "lucide-react";
+import { TErrorResponse, TOrder, TOrderResponse } from "@/types";
 import { useCreateOrderMutation } from "@/redux/api/endpoints/orderApi";
 import { toast } from "sonner";
 
@@ -40,7 +40,7 @@ type FormData = z.infer<typeof formSchema>;
 
 export default function Checkout() {
   const cart = useAppSelector((state) => state.cart);
-  const [createOrder, { isLoading, isError, data: result }] = useCreateOrderMutation();
+  const [createOrder, { isLoading }] = useCreateOrderMutation();
   const navigate = useNavigate();
 
   const form = useForm<FormData>({
@@ -65,7 +65,7 @@ export default function Checkout() {
     };
   });
 
-  const onSubmit = (data: FormData) => {
+  const onSubmit = async (data: FormData) => {
     const { address, email, name, paymentMethod, phone } = data;
 
     const newOrder: TOrder = {
@@ -79,20 +79,19 @@ export default function Checkout() {
       paymentMethod,
       totalAmount: cart.totalPrice,
     };
-    createOrder(newOrder);
-    
+    const result = await createOrder(newOrder);
+    if (result.error) {
+      const backendError = result.error as TErrorResponse;
+      toast.error(backendError.data.error);
+    }
+    if (result.data) {
+      const backendData = result.data as TOrderResponse;
+
+      console.log(backendData);
+      navigate("/success", { state: { orderDetails: backendData } });
+    }
   };
 
-  if (isLoading) {
-    <div className="h-screen w-full flex items-center justify-center/">
-      <LoaderIcon className="size-10" />;
-    </div>;
-  }
-  if (isError) {
-    <div className="h-screen w-full flex items-center justify-center/">
-      <h2 className="2xl">Something went wrong</h2>
-    </div>;
-  }
   return (
     <div className="h-screen flex items-center justify-center">
       <Card className="w-full max-w-2xl mx-auto">
@@ -208,7 +207,7 @@ export default function Checkout() {
                 )}
               />
               <Button type="submit" className="w-full">
-                Place Order
+                {isLoading ? <Loader2Icon /> : "Place Order"}
               </Button>
             </form>
           </Form>

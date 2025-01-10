@@ -17,6 +17,7 @@ interface SidebarProps {
   setMinPrice: React.Dispatch<React.SetStateAction<number | undefined>>;
   setMaxPrice: React.Dispatch<React.SetStateAction<number | undefined>>;
   page: number;
+  
   resetFilters: () => void;
 }
 

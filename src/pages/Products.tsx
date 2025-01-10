@@ -5,11 +5,18 @@ import { useGetAllCategoriesQuery } from "@/redux/api/endpoints/categoryApi";
 import Sidebar from "@/components/pages/products/Sidebar";
 import ProductList from "@/components/pages/products/ProductList";
 import ProductPagination from "@/components/pages/products/ProductPagination";
+import { useLocation } from "react-router-dom";
 
 const Products = () => {
-  const [searchTerm, setSearchTerm] = useState("");
+  const categoryId: string[] = [];
+  const location = useLocation();
+  const category = location.state?.categoryId;
+  const navSearch = location.state?.navSearch;
+  categoryId.push(category);
+  const [searchTerm, setSearchTerm] = useState(navSearch);
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [selectedCategories, setSelectedCategories] =
+    useState<string[]>(categoryId);
   const [sort, setSort] = useState("");
   const [minPrice, setMinPrice] = useState<number | undefined>();
   const [maxPrice, setMaxPrice] = useState<number | undefined>();
