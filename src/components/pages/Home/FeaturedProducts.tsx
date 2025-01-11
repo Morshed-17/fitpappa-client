@@ -3,6 +3,8 @@ import Container from "../../shared/Container";
 import SectionTitle from "../../shared/SectionTitle";
 import ProductCard from "../../ui/ProductCard";
 import { TProduct } from "@/types";
+import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 const FeaturedProducts = () => {
   const { data: products, isLoading } = useGetAllProductsQuery({});
@@ -22,6 +24,11 @@ const FeaturedProducts = () => {
             </>
           )}
         </div>
+      </div>
+      <div className="w-full flex justify-center">
+        <Link to="/products">
+          <Button className="mt-5 rounded-full">Explore More </Button>
+        </Link>
       </div>
     </Container>
   );

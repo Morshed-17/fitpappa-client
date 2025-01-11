@@ -12,7 +12,10 @@ const Products = () => {
   const location = useLocation();
   const category = location.state?.categoryId;
   const navSearch = location.state?.navSearch;
-  categoryId.push(category);
+  if(category){
+    categoryId.push(category);
+  }
+  
   const [searchTerm, setSearchTerm] = useState(navSearch);
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const [selectedCategories, setSelectedCategories] =

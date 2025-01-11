@@ -7,19 +7,15 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "./button";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { TProduct } from "@/types";
-import { ShoppingCart } from "lucide-react";
-import { useAppDispatch } from "@/redux/hook";
-import { addToCart } from "@/redux/features/cartSlice";
 
 const ProductCard = (product: TProduct) => {
-  const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { _id, images, category, name, price, stock } = product;
+  const { _id, images, category, name, price } = product;
   return (
     <Card
-      onClick={() => navigate(`/products/${_id}`)}
+      onClick={() => navigate(``)}
       className="cursor-pointer hover:shadow-md transition-all"
     >
       <CardHeader>
@@ -37,28 +33,14 @@ const ProductCard = (product: TProduct) => {
         <p>{name}</p>
       </CardContent>
       <CardFooter className="flex justify-center">
-        {stock <= 0 ? (
+        <Link to={`/products/${_id}`}>
           <Button
             variant="secondary"
             className="rounded-full border-[1px] border-gray-300"
-            disabled
           >
-            <ShoppingCart className="mr-2" />
-            Add to Cart
+            View Details
           </Button>
-        ) : (
-          <Button
-            onClick={(e) => {
-              e.stopPropagation(); // Prevent the click from reaching the parent
-              dispatch(addToCart({ product, quantity: 1 }));
-            }}
-            variant="secondary"
-            className="rounded-full border-[1px] border-gray-300"
-          >
-            <ShoppingCart className="mr-2" />
-            Add to Cart
-          </Button>
-        )}
+        </Link>
       </CardFooter>
     </Card>
   );
