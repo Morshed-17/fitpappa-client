@@ -8,6 +8,18 @@ import {
 } from "@/redux/features/cartSlice";
 import { useAppDispatch } from "@/redux/hook";
 import { Trash2 } from "lucide-react";
+import { Link } from "react-router-dom";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 function CartCard({ product, quantity }: TCartItem) {
   const { _id, images, name, price } = product;
@@ -23,8 +35,10 @@ function CartCard({ product, quantity }: TCartItem) {
       <CardContent className="flex-1 flex flex-col sm:flex-row justify-between p-0 items-center w-full">
         <CardHeader className="flex items-center justify-between w-full sm:w-auto">
           <CardTitle className="text-sm font-medium text-center sm:text-left">
-            {name}
-            <p className="text-gray-600 text-sm">${price}</p>
+            <Link to={`/products/${_id}`}>
+              {name}
+              <p className="text-gray-600 text-sm">${price}</p>
+            </Link>
           </CardTitle>
         </CardHeader>
         <div className="flex items-center gap-2 mt-4 sm:mt-0 sm:flex-1 justify-center">
@@ -45,13 +59,29 @@ function CartCard({ product, quantity }: TCartItem) {
           </Button>
         </div>
         <div className="mt-4 sm:mt-0">
-          <Button
-            onClick={() => dispatch(removeFromCart(_id))}
-            variant="destructive"
-            size="icon"
-          >
-            <Trash2 />
-          </Button>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="outline">
+                <Trash2 />
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This will remove the product from your cart!
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={() => dispatch(removeFromCart(_id))}
+                >
+                  Remove From Cart
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </CardContent>
     </Card>

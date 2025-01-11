@@ -6,24 +6,27 @@ const CategoryCard = ({ name, image, _id }: TCategory) => {
   const navigate = useNavigate();
 
   return (
-    <Card
-      onClick={() => navigate("/products", { state: { categoryId: _id } })}
-      className="cursor-pointer group min-w-56"
-    >
-      <CardHeader>
-        <CardTitle>
-          <img
-            className="rounded-lg group-hover:scale-105 transition-all"
-            src={image}
-            alt=""
-          />
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <h3 className="text-center lg:text-xl">{name}</h3>
-      </CardContent>
-    </Card>
+    <div className="group">
+      <Card
+        onClick={() => navigate("/products", { state: { categoryId: _id } })}
+        className="cursor-pointer overflow-hidden transition-transform  h-full"
+      >
+        <CardHeader className="p-3">
+          <CardTitle className="w-full pb-[100%] relative">
+            <img
+              className="rounded-lg absolute inset-0 group-hover:scale-105 transition-all duration-300 w-full h-full object-cover"
+              src={image}
+              alt={name}
+            />
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="p-3">
+          <h3 className="text-center text-sm sm:text-base lg:text-lg truncate">{name}</h3>
+        </CardContent>
+      </Card>
+    </div>
   );
 };
 
 export default CategoryCard;
+
